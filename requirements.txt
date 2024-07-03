@@ -1,0 +1,5 @@
+chex
+pytest
+torch==2.3.1
+jax[cuda12]
+numpy<2.0.0

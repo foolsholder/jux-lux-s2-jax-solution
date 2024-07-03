@@ -4,6 +4,13 @@ JUX is a <ins>J</ins>ax-accelerated game core for L<ins>ux</ins> AI Challenge Se
 ## Installation
 
 ### Install JAX
+```sh
+conda install -c nvidia cuda-nvcc cuda-python
+conda install cudnn
+pip3 install rich chex pytest
+pip3 install -U "jax[cuda12]" torch
+```
+
 JAX is a main dependency of JUX, and must be installed by user manually.
 ```sh
 pip install --upgrade "jax[cuda11_cudnn82]==0.4.7" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
