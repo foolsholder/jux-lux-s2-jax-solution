@@ -485,7 +485,7 @@ class JuxAction(NamedTuple):
 
         assert unit_action_queue_count.dtype == getattr(torch, ActionQueue.__annotations__['count'].dtype.name), \
             f"unit_action_queue_count.dtype must be {getattr(torch, ActionQueue.__annotations__['count'].dtype.name)}, but got {unit_action_queue_count.dtype}."
-        assert unit_action_queue_update.dtype == torch.uint8
+        assert unit_action_queue_update.dtype == torch.bool
 
         chex.assert_equal_shape(unit_action_queue)
 
