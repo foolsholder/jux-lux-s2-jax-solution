@@ -7,8 +7,8 @@ from jax import Array
 from luxai_s2.team import FactionTypes as LuxFactionTypes
 from luxai_s2.team import Team as LuxTeam
 
-from jux.config import JuxBufferConfig
-from jux.utils import INT32_MAX, imax
+from jux.jux_env.config import JuxBufferConfig
+from jux.jux_env.utils import INT32_MAX, imax
 
 
 class FactionTypes(IntEnum):

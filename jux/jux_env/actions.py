@@ -12,13 +12,13 @@ from luxai_s2.actions import Action as LuxAction
 from luxai_s2.actions import format_action_vec
 from luxai_s2.unit import UnitType as LuxUnitType
 
-import jux.torch
-import jux.tree_util
-from jux.config import EnvConfig, JuxBufferConfig
-from jux.map.position import Direction, Position
-from jux.team import FactionTypes
-from jux.unit_cargo import ResourceType, UnitCargo
-from jux.utils import INT16_MAX
+import jux.jux_env.torch
+import jux.jux_env.tree_util
+from jux.jux_env.config import EnvConfig, JuxBufferConfig
+from jux.jux_env.map.position import Direction, Position
+from jux.jux_env.team import FactionTypes
+from jux.jux_env.unit_cargo import ResourceType, UnitCargo
+from jux.jux_env.utils import INT16_MAX
 
 try:
     import torch
@@ -188,11 +188,11 @@ class ActionQueue(NamedTuple):
         n_actions = jnp.int8(n_actions)
         if n_actions == 0:
             return cls.empty(max_queue_size)
-        data = jux.tree_util.batch_into_leaf([UnitAction.from_lux(act) for act in actions])
+        data = jux.jux_env.tree_util.batch_into_leaf([UnitAction.from_lux(act) for act in actions])
         pad_size = max_queue_size - n_actions
         if pad_size > 0:
             padding = jax.tree_map(lambda x: x[None].repeat(pad_size), UnitAction.do_nothing())
-            data = jux.tree_util.concat_in_leaf([data, padding], axis=-1)
+            data = jux.jux_env.tree_util.concat_in_leaf([data, padding], axis=-1)
         chex.assert_shape(data[0], (max_queue_size, ))
         return cls(data, jnp.int8(0), n_actions, n_actions)
 
@@ -509,10 +509,10 @@ class JuxAction(NamedTuple):
         assert (unit_action_queue_count[unit_action_queue_update == False] == 0).all()
         assert (unit_action_queue_count[unit_action_queue_update == True] <= queue_size).all()
 
-        factory_action = jux.torch.from_torch(factory_action)
-        unit_action_queue = jax.tree_map(jux.torch.from_torch, unit_action_queue)
-        unit_action_queue_count = jux.torch.from_torch(unit_action_queue_count)
-        unit_action_queue_update = jux.torch.from_torch(unit_action_queue_update)
+        factory_action = jux.jux_env.torch.from_torch(factory_action)
+        unit_action_queue = jax.tree_map(jux.jux_env.torch.from_torch, unit_action_queue)
+        unit_action_queue_count = jux.jux_env.torch.from_torch(unit_action_queue_count)
+        unit_action_queue_update = jux.jux_env.torch.from_torch(unit_action_queue_update)
         unit_action_queue_update = unit_action_queue_update.astype(jnp.bool_)
 
         return JuxAction(
@@ -528,7 +528,7 @@ class JuxAction(NamedTuple):
         Returns:
             JuxAction: a JuxAction object with leaves converted to `torch.Tensor`.
         """
-        return jax.tree_map(jux.torch.to_torch, self)
+        return jax.tree_map(jux.jux_env.torch.to_torch, self)
 
 
 def bid_action_from_lux(lux_bid_action: Dict[str, Dict[str, Any]]) -> Tuple[Array, Array]:

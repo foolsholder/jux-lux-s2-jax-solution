@@ -4,9 +4,9 @@ from jax import numpy as jnp
 from luxai_s2.team import FactionTypes as LuxFactionTypes
 from luxai_s2.team import Team as LuxTeam
 
-from jux.factory import Factory, LuxFactory, LuxTeam
-from jux.map.position import Position
-from jux.unit import ResourceType, Unit, UnitCargo
+from jux.jux_env.factory import Factory, LuxFactory, LuxTeam
+from jux.jux_env.map.position import Position
+from jux.jux_env.unit import ResourceType, Unit, UnitCargo
 
 
 class TestFactory(chex.TestCase):

@@ -4,7 +4,7 @@ from typing import NamedTuple
 from jax import Array, lax
 from jax import numpy as jnp
 
-from jux.map_generator.simplexnoise import SimplexNoise
+from jux.jux_env.map_generator.simplexnoise import SimplexNoise
 
 
 class SymmetryType(IntEnum):

@@ -3,11 +3,11 @@ import jax
 from jax import numpy as jnp
 from luxai_s2.team import FactionTypes as LuxFactionTypes
 
-from jux.config import EnvConfig
-from jux.team import LuxTeam
-from jux.tree_util import batch_into_leaf
-from jux.unit import LuxUnit, LuxUnitType, Unit, UnitType
-from jux.unit_cargo import ResourceType, UnitCargo
+from jux.jux_env.config import EnvConfig
+from jux.jux_env.team import LuxTeam
+from jux.jux_env.tree_util import batch_into_leaf
+from jux.jux_env.unit import LuxUnit, LuxUnitType, Unit, UnitType
+from jux.jux_env.unit_cargo import ResourceType, UnitCargo
 
 
 class TestUnit(chex.TestCase):

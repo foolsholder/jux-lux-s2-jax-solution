@@ -9,11 +9,11 @@ from jax.numpy.fft import fft
 from luxai_s2.map_generator import GameMap as LuxGameMap
 from luxai_s2.map_generator.visualize import viz as lux_viz
 
-from jux.config import EnvConfig, JuxBufferConfig
-from jux.map_generator.flood import boundary_sum, component_sum, flood_fill
-from jux.map_generator.generator_config import CaveConfig, MapDistributionType, MapType, MountainConfig
-from jux.map_generator.symnoise import SymmetryNoise, SymmetryType, symmetrize
-from jux.utils import INT32_MAX
+from jux.jux_env.config import EnvConfig, JuxBufferConfig
+from jux.jux_env.map_generator.flood import boundary_sum, component_sum, flood_fill
+from jux.jux_env.map_generator.generator_config import CaveConfig, MapDistributionType, MapType, MountainConfig
+from jux.jux_env.map_generator.symnoise import SymmetryNoise, SymmetryType, symmetrize
+from jux.jux_env.utils import INT32_MAX
 
 
 class GameMap(NamedTuple):

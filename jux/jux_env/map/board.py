@@ -8,10 +8,10 @@ from luxai_s2.env import Factory as LuxFactory
 from luxai_s2.env import Unit as LuxUnit
 from luxai_s2.map.board import Board as LuxBoard
 
-from jux.config import EnvConfig, JuxBufferConfig, LuxEnvConfig
-from jux.map.position import Position
-from jux.map_generator.generator import GameMap, MapDistributionType, MapType, SymmetryType
-from jux.utils import INT32_MAX, imax
+from jux.jux_env.config import EnvConfig, JuxBufferConfig, LuxEnvConfig
+from jux.jux_env.map.position import Position
+from jux.jux_env.map_generator.generator import GameMap, MapDistributionType, MapType, SymmetryType
+from jux.jux_env.utils import INT32_MAX, imax
 
 radius = 6
 delta_xy = jnp.mgrid[-radius:radius + 1, -radius:radius + 1]  # int[2, 13, 13]

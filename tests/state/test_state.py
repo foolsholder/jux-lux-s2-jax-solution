@@ -8,15 +8,15 @@ import pytest
 from luxai_s2 import LuxAI_S2
 from rich import print
 
-import jux.actions
-import jux.utils
-from jux.config import EnvConfig, JuxBufferConfig
-from jux.state import JuxAction, State
-from jux.team import FactionTypes
+import jux.jux_env.actions
+import jux.jux_env.utils
+from jux.jux_env.config import EnvConfig, JuxBufferConfig
+from jux.jux_env.state import JuxAction, State
+from jux.jux_env.team import FactionTypes
 
 jnp.set_printoptions(linewidth=500, threshold=10000)
 
-from jux.tree_util import map_to_aval
+from jux.jux_env.tree_util import map_to_aval
 
 state___eq___jitted = jax.jit(chex.assert_max_traces(n=1)(State.__eq__))
 
@@ -25,7 +25,7 @@ class TestState(chex.TestCase):
 
     def test_from_to_lux(self):
         buf_cfg = JuxBufferConfig(MAX_N_UNITS=30)
-        env, actions = jux.utils.load_replay(f'https://www.kaggleusercontent.com/episodes/{46215591}.json')
+        env, actions = jux.jux_env.utils.load_replay(f'https://www.kaggleusercontent.com/episodes/{46215591}.json')
         for i in range(10):
             action = next(actions)
             env.step(action)
@@ -42,7 +42,7 @@ class TestState(chex.TestCase):
 
         # 2. prepare an environment
         buf_cfg = JuxBufferConfig(MAX_N_UNITS=100)
-        env, actions = jux.utils.load_replay(f'https://www.kaggleusercontent.com/episodes/{46215591}.json')
+        env, actions = jux.jux_env.utils.load_replay(f'https://www.kaggleusercontent.com/episodes/{46215591}.json')
 
         # skip early stage
         while env.env_steps < 11:
@@ -93,7 +93,7 @@ class TestState(chex.TestCase):
         # 2. prepare an environment
         buf_cfg = JuxBufferConfig(MAX_N_UNITS=100)
 
-        env, actions = jux.utils.load_replay("https://www.kaggleusercontent.com/episodes/46215591.json")
+        env, actions = jux.jux_env.utils.load_replay("https://www.kaggleusercontent.com/episodes/46215591.json")
 
         # skip first several steps, since it contains no recharge action
         while env.env_steps < 10 + 149:
@@ -139,7 +139,7 @@ class TestState(chex.TestCase):
 
         # 2. prepare an environment
         buf_cfg = JuxBufferConfig(MAX_N_UNITS=100)
-        env, actions = jux.utils.load_replay("https://www.kaggleusercontent.com/episodes/46215591.json")
+        env, actions = jux.jux_env.utils.load_replay("https://www.kaggleusercontent.com/episodes/46215591.json")
         # The first 905 steps do not contains any FactoryAction.Water, so we skip them.
         while env.env_steps < 300:
             act = next(actions)
@@ -198,7 +198,7 @@ class TestState(chex.TestCase):
         for episode, skip_steps in cases:
             print(f"episode: {episode}")
             # 2. prepare an environment
-            env, actions = jux.utils.load_replay(f'https://www.kaggleusercontent.com/episodes/{episode}.json')
+            env, actions = jux.jux_env.utils.load_replay(f'https://www.kaggleusercontent.com/episodes/{episode}.json')
 
             # skip early stage
             while env.env_steps < 11:
@@ -237,7 +237,7 @@ class TestState(chex.TestCase):
             assert_state_eq(jux_state, lux_state)
 
     def test_team_lichen_score(self):
-        env, actions = jux.utils.load_replay("https://www.kaggleusercontent.com/episodes/46215591.json")
+        env, actions = jux.jux_env.utils.load_replay("https://www.kaggleusercontent.com/episodes/46215591.json")
         for act in actions:
             _, lux_rewards, _, _, _ = env.step(act)
         lux_rewards = jnp.array(list(lux_rewards.values()))

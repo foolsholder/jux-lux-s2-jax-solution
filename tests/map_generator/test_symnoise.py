@@ -5,7 +5,7 @@ from jax import numpy as jnp
 from luxai_s2.map_generator.symnoise import SymmetricNoise as LuxSymmetricNoise
 from luxai_s2.map_generator.symnoise import symmetrize as lux_symmetrize
 
-from jux.map_generator.symnoise import SymmetryNoise, SymmetryType, symmetrize
+from jux.jux_env.map_generator.symnoise import SymmetryNoise, SymmetryType, symmetrize
 
 
 class TestSymnoise(chex.TestCase):

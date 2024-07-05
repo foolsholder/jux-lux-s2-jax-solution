@@ -5,10 +5,10 @@ from jax import numpy as jnp
 from luxai_s2.factory import Factory as LuxFactory
 from luxai_s2.team import Team as LuxTeam
 
-from jux.config import EnvConfig
-from jux.map.position import Position, direct2delta_xy
-from jux.unit import ResourceType, Unit, UnitCargo
-from jux.utils import INT32_MAX, imax
+from jux.jux_env.config import EnvConfig
+from jux.jux_env.map.position import Position, direct2delta_xy
+from jux.jux_env.unit import ResourceType, Unit, UnitCargo
+from jux.jux_env.utils import INT32_MAX, imax
 
 
 class Factory(NamedTuple):

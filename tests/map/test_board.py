@@ -2,8 +2,8 @@ import chex
 import numpy as np
 from luxai_s2.env import LuxAI_S2
 
-from jux.config import EnvConfig, JuxBufferConfig
-from jux.map.board import Board, LuxBoard
+from jux.jux_env.config import EnvConfig, JuxBufferConfig
+from jux.jux_env.map.board import Board, LuxBoard
 
 from ..map_generator.test_generator import lux_game_map_eq
 

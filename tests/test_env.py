@@ -6,13 +6,13 @@ import pytest
 from luxai_s2 import LuxAI_S2
 from rich import print
 
-import jux.actions
-import jux.tree_util
-import jux.utils
-from jux.actions import JuxAction
-from jux.config import JuxBufferConfig
-from jux.env import JuxEnv, JuxEnvBatch
-from jux.state import State
+import jux.jux_env.actions
+import jux.jux_env.tree_util
+import jux.jux_env.utils
+from jux.jux_env.actions import JuxAction
+from jux.jux_env.config import JuxBufferConfig
+from jux.jux_env.env import JuxEnv, JuxEnvBatch
+from jux.jux_env.state import State
 
 state___eq___jitted = jax.jit(chex.assert_max_traces(n=1)(State.__eq__))
 state___eq___vmap_jitted = jax.jit(jax.vmap(chex.assert_max_traces(n=1)(State.__eq__)))

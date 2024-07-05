@@ -5,10 +5,10 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 
-from jux.config import JuxBufferConfig
-from jux.map_generator.generator import GameMap, LuxGameMap, MapType
-from jux.map_generator.generator_config import MapDistributionType
-from jux.map_generator.symnoise import SymmetryType
+from jux.jux_env.config import JuxBufferConfig
+from jux.jux_env.map_generator.generator import GameMap, LuxGameMap, MapType
+from jux.jux_env.map_generator.generator_config import MapDistributionType
+from jux.jux_env.map_generator.symnoise import SymmetryType
 
 os.environ["XLA_PYTHON_CLIENT_MEM_FRACTION"] = "0.50"
 

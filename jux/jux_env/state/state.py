@@ -8,17 +8,17 @@ import numpy as np
 from jax import Array
 from luxai_s2.state import State as LuxState
 
-import jux.map_generator.flood
-import jux.tree_util
-from jux.actions import FactoryAction, JuxAction, UnitAction, UnitActionType
-from jux.config import EnvConfig, JuxBufferConfig
-from jux.factory import Factory, LuxFactory
-from jux.map import Board
-from jux.map.position import Direction, Position, direct2delta_xy
-from jux.team import FactionTypes, LuxTeam, Team
-from jux.unit import ActionQueue, LuxUnit, Unit, UnitCargo, UnitType
-from jux.unit_cargo import ResourceType
-from jux.utils import INT32_MAX, imax
+import jux.jux_env.map_generator.flood
+import jux.jux_env.tree_util
+from jux.jux_env.actions import FactoryAction, JuxAction, UnitAction, UnitActionType
+from jux.jux_env.config import EnvConfig, JuxBufferConfig
+from jux.jux_env.factory import Factory, LuxFactory
+from jux.jux_env.map import Board
+from jux.jux_env.map.position import Direction, Position, direct2delta_xy
+from jux.jux_env.team import FactionTypes, LuxTeam, Team
+from jux.jux_env.unit import ActionQueue, LuxUnit, Unit, UnitCargo, UnitType
+from jux.jux_env.unit_cargo import ResourceType
+from jux.jux_env.utils import INT32_MAX, imax
 
 
 def is_day(env_cfg: EnvConfig, env_step):
@@ -32,7 +32,7 @@ def sort_by_unit_id(units: Union[Unit, Factory]):
     return units
 
 
-batch_into_leaf_jitted = jax.jit(jux.tree_util.batch_into_leaf, static_argnames=('axis', ))
+batch_into_leaf_jitted = jax.jit(jux.jux_env.tree_util.batch_into_leaf, static_argnames=('axis', ))
 
 
 class State(NamedTuple):
@@ -171,7 +171,7 @@ class State(NamedTuple):
         factory_id2idx = State.generate_factory_id2idx(factories, buf_cfg.MAX_N_FACTORIES)
         n_factories = jnp.zeros(shape=(2, ), dtype=Factory.id_dtype())
 
-        teams = jux.tree_util.batch_into_leaf([Team.new(team_id=id, buf_cfg=buf_cfg) for id in range(2)])
+        teams = jux.jux_env.tree_util.batch_into_leaf([Team.new(team_id=id, buf_cfg=buf_cfg) for id in range(2)])
 
         state = cls(
             env_cfg=env_cfg,
@@ -213,10 +213,10 @@ class State(NamedTuple):
                     jax.tree_util.tree_map(lambda x: x.repeat(buf_cfg.MAX_N_UNITS - n_units[0], axis=0), empty_unit),
                     jax.tree_util.tree_map(lambda x: x.repeat(buf_cfg.MAX_N_UNITS - n_units[1], axis=0), empty_unit),
                 )
-                units: Unit = jux.tree_util.batch_into_leaf([  # batch into leaf
-                    jux.tree_util.concat_in_leaf([jux.tree_util.batch_into_leaf(units[0]), padding_units[0]])
+                units: Unit = jux.jux_env.tree_util.batch_into_leaf([  # batch into leaf
+                    jux.jux_env.tree_util.concat_in_leaf([jux.jux_env.tree_util.batch_into_leaf(units[0]), padding_units[0]])
                     if n_units[0] > 0 else padding_units[0],
-                    jux.tree_util.concat_in_leaf([jux.tree_util.batch_into_leaf(units[1]), padding_units[1]])
+                    jux.jux_env.tree_util.concat_in_leaf([jux.jux_env.tree_util.batch_into_leaf(units[1]), padding_units[1]])
                     if n_units[1] > 0 else padding_units[1],
                 ])
                 n_units = jnp.array(n_units, dtype=Unit.id_dtype())
@@ -361,7 +361,7 @@ class State(NamedTuple):
         lux_env_cfg = self.env_cfg.to_lux()
 
         # convert teams
-        lux_teams: List[Team] = jux.tree_util.batch_out_of_leaf(self.teams)
+        lux_teams: List[Team] = jux.jux_env.tree_util.batch_out_of_leaf(self.teams)
         lux_teams: Dict[str, LuxTeam] = {
             f"player_{team.team_id}": team.to_lux(team.team_id == self.place_first)
             for team in lux_teams
@@ -369,11 +369,11 @@ class State(NamedTuple):
 
         # convert units
         def _to_lux_units(units: Unit, n_unit: int) -> Dict[str, LuxUnit]:
-            units: List[Unit] = jux.tree_util.batch_out_of_leaf(units)[:n_unit]
+            units: List[Unit] = jux.jux_env.tree_util.batch_out_of_leaf(units)[:n_unit]
             units: List[LuxUnit] = [u.to_lux(lux_teams, lux_env_cfg) for u in units]
             return {u.unit_id: u for u in units}
 
-        lux_units = jux.tree_util.batch_out_of_leaf(self.units)
+        lux_units = jux.jux_env.tree_util.batch_out_of_leaf(self.units)
         n_units = self.n_units
         lux_units: Dict[str, Dict[str, Unit]] = {
             'player_0': _to_lux_units(lux_units[0], n_units[0]),
@@ -382,11 +382,11 @@ class State(NamedTuple):
 
         # convert factories
         def _to_lux_factories(factories: Factory, n_factory: int) -> Dict[str, LuxFactory]:
-            factories: List[Factory] = jux.tree_util.batch_out_of_leaf(factories)[:n_factory]
+            factories: List[Factory] = jux.jux_env.tree_util.batch_out_of_leaf(factories)[:n_factory]
             factories: List[LuxFactory] = [f.to_lux(lux_teams) for f in factories]
             return {f.unit_id: f for f in factories}
 
-        lux_factories = jux.tree_util.batch_out_of_leaf(self.factories)
+        lux_factories = jux.jux_env.tree_util.batch_out_of_leaf(self.factories)
         n_factories = self.n_factories
         lux_factories: Dict[str, Dict[str, LuxFactory]] = {
             'player_0': _to_lux_factories(lux_factories[0], n_factories[0]),
@@ -413,7 +413,7 @@ class State(NamedTuple):
             rng_state=self.rng_state.astype(jnp.int32),
             board=self.board._replace(seed=self.board.seed.astype(jnp.int32)),
         )
-        return jax.tree_map(jux.torch.to_torch, self)
+        return jax.tree_map(jux.jux_env.torch.to_torch, self)
 
     def __eq__(self, other: 'State') -> bool:
         if not isinstance(other, State):
@@ -423,8 +423,8 @@ class State(NamedTuple):
         # other.check_id2idx()
 
         def teams_eq(teams_a: Team, teams_b: Team) -> bool:
-            teams_a = jux.tree_util.batch_out_of_leaf(teams_a)
-            teams_b = jux.tree_util.batch_out_of_leaf(teams_b)
+            teams_a = jux.jux_env.tree_util.batch_out_of_leaf(teams_a)
+            teams_b = jux.jux_env.tree_util.batch_out_of_leaf(teams_b)
             return (teams_a[0] == teams_b[0]) & (teams_a[1] == teams_b[1])
 
         def units_eq(units_a: Unit, n_units_a: Array, units_b: Unit, n_units_b: Array) -> bool:
@@ -673,8 +673,8 @@ class State(NamedTuple):
         update_queue = actions.unit_action_queue_update & unit_mask & (update_power_req <= self.units.power)
         new_power = jnp.where(update_queue, self.units.power - update_power_req, self.units.power)
         chex.assert_shape(new_power, (2, self.MAX_N_UNITS))
-        new_action_queue = jux.actions.ActionQueue(
-            data=jux.tree_util.tree_where(
+        new_action_queue = jux.jux_env.actions.ActionQueue(
+            data=jux.jux_env.tree_util.tree_where(
                 update_queue[..., None],
                 actions.unit_action_queue,
                 self.units.action_queue.data,
@@ -692,7 +692,7 @@ class State(NamedTuple):
 
         # get next actions
         unit_action = jax.vmap(jax.vmap(Unit.next_action))(self.units)
-        unit_action = jux.tree_util.tree_where(
+        unit_action = jux.jux_env.tree_util.tree_where(
             unit_mask & ~failed_players[..., None],
             unit_action,
             UnitAction.do_nothing(),
@@ -1348,7 +1348,7 @@ class State(NamedTuple):
             Unit.empty(self.env_cfg._replace(UNIT_ACTION_QUEUE_SIZE=self.UNIT_ACTION_QUEUE_SIZE)),
         )
 
-        units = jux.tree_util.tree_where(dead, empty_unit, units)
+        units = jux.jux_env.tree_util.tree_where(dead, empty_unit, units)
         units = jax.tree_map(lambda x: x[jnp.arange(2)[:, None], live_idx], units)
 
         # update other states
@@ -1407,7 +1407,7 @@ class State(NamedTuple):
             Factory.empty(),
         )
 
-        factories = jux.tree_util.tree_where(dead, empty_factory, factories)
+        factories = jux.jux_env.tree_util.tree_where(dead, empty_factory, factories)
         factories = jax.tree_map(lambda x: x[jnp.arange(2)[:, None], live_idx], factories)
 
         # update other states
@@ -1531,7 +1531,7 @@ class State(NamedTuple):
             (strains_and_factory == neighbor_color) & (strains_and_factory != imax(strains_and_factory.dtype))
         )  # bool[4, H, W]
 
-        color = jux.map_generator.flood._flood_fill(  # int[H, W, 2]
+        color = jux.jux_env.map_generator.flood._flood_fill(  # int[H, W, 2]
             jnp.concatenate(  # int[H, W, 5, 2]
                 [
                     jnp.where(connect_cond[:, None], neighbor_ij, ij).transpose(2, 3, 0, 1),  # int[H, W, 4, 2]
@@ -1548,7 +1548,7 @@ class State(NamedTuple):
                                            .get(mode='fill', fill_value=imax(connected_lichen.dtype))
 
         # compute connected lichen size
-        connected_lichen_size = jux.map_generator.flood.component_sum(UnitCargo.dtype()(1), color)  # int[H, W]
+        connected_lichen_size = jux.jux_env.map_generator.flood.component_sum(UnitCargo.dtype()(1), color)  # int[H, W]
         # -9 for the factory occupied cells
         connected_lichen_size = connected_lichen_size[self.factories.pos.x, self.factories.pos.y] - 9  # int[2, F]
 
@@ -1601,7 +1601,7 @@ class State(NamedTuple):
         color = jnp.where((strain_id == imax(strain_id.dtype))[..., None], ij.transpose(1, 2, 0), color)
 
         # 4. grow_lichen_size
-        cmp_cnt = jux.map_generator.flood.component_sum(UnitCargo.dtype()(1), color)  # int[H, W]
+        cmp_cnt = jux.jux_env.map_generator.flood.component_sum(UnitCargo.dtype()(1), color)  # int[H, W]
         # -9 for the factory occupied cells
         grow_lichen_size = cmp_cnt[self.factories.pos.x, self.factories.pos.y] - 9  # int[2, F]
 

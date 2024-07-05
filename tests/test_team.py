@@ -1,6 +1,6 @@
-import jux.team
-from jux.config import JuxBufferConfig
-from jux.team import FactionTypes, LuxFactionTypes, LuxTeam, Team
+import jux.jux_env.team
+from jux.jux_env.config import JuxBufferConfig
+from jux.jux_env.team import FactionTypes, LuxFactionTypes, LuxTeam, Team
 
 
 def lux_team_eq(a: LuxTeam, b: LuxTeam) -> bool:

@@ -6,12 +6,12 @@ import pytest
 from luxai_s2 import actions as lux_actions
 from luxai_s2.actions import Action as LuxAction
 
-import jux.utils
-from jux.actions import ActionQueue, FactoryAction, JuxAction, UnitAction
-from jux.config import EnvConfig, JuxBufferConfig
-from jux.map.position import Direction
-from jux.state import State
-from jux.unit_cargo import ResourceType
+import jux.jux_env.utils
+from jux.jux_env.actions import ActionQueue, FactoryAction, JuxAction, UnitAction
+from jux.jux_env.config import EnvConfig, JuxBufferConfig
+from jux.jux_env.map.position import Direction
+from jux.jux_env.state import State
+from jux.jux_env.unit_cargo import ResourceType
 
 
 class TestActions:
@@ -79,7 +79,7 @@ class TestJuxAction():
         except ImportError:
             pytest.skip("torch is not installed")
 
-        env, actions = jux.utils.load_replay("tests/replay2.0_0.json.gz")
+        env, actions = jux.jux_env.utils.load_replay("tests/replay2.0_0.json.gz")
         while env.env_steps < 30:
             act = next(actions)
             env.step(act)

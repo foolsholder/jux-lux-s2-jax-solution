@@ -1,5 +1,5 @@
-import jux.config
-from jux.config import EnvConfig, LuxEnvConfig, LuxUnitConfig, UnitConfig
+import jux.jux_env.config
+from jux.jux_env.config import EnvConfig, LuxEnvConfig, LuxUnitConfig, UnitConfig
 
 
 class TestUnitConfig:

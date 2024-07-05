@@ -9,11 +9,11 @@ from luxai_s2.team import Team as LuxTeam
 from luxai_s2.unit import Unit as LuxUnit
 from luxai_s2.unit import UnitType as LuxUnitType
 
-from jux.actions import ActionQueue, UnitAction
-from jux.config import EnvConfig, UnitConfig
-from jux.map.position import Position
-from jux.unit_cargo import ResourceType, UnitCargo
-from jux.utils import INT32_MAX, imax
+from jux.jux_env.actions import ActionQueue, UnitAction
+from jux.jux_env.config import EnvConfig, UnitConfig
+from jux.jux_env.map.position import Position
+from jux.jux_env.unit_cargo import ResourceType, UnitCargo
+from jux.jux_env.utils import INT32_MAX, imax
 
 
 class UnitType(IntEnum):

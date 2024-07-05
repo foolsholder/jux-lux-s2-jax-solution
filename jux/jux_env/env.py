@@ -6,9 +6,9 @@ import jax.numpy as jnp
 from jax import Array
 from luxai_s2 import LuxAI_S2
 
-from jux.actions import JuxAction
-from jux.config import EnvConfig, JuxBufferConfig
-from jux.state import State
+from jux.jux_env.actions import JuxAction
+from jux.jux_env.config import EnvConfig, JuxBufferConfig
+from jux.jux_env.state import State
 
 
 class JuxEnv:
@@ -124,7 +124,7 @@ class JuxEnv:
                 have following actions in queue, if the robot has enough power to update its action queue:
                 ```python
                 n_actions = actions.unit_action_queue_count[player_i, robot_j]
-                actions_in_queue = jux.tree_util.batch_out_of_leaf(
+                actions_in_queue = jux.jux_env.tree_util.batch_out_of_leaf(
                     jax.tree_map(lambda x: x[player_i, robot_j, :n_actions], actions.unit_action_queue)
                 )
                 ```

@@ -6,7 +6,7 @@ import numpy as np
 from jax import Array
 from luxai_s2.map.position import Position as LuxPosition
 
-from jux.utils import INT8_MAX, INT32_MAX
+from jux.jux_env.utils import INT8_MAX, INT32_MAX
 
 
 class Position(NamedTuple):
