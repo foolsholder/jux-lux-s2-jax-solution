@@ -27,7 +27,7 @@ class TestJuxEnv:
         assert state___eq___jitted(state1, state2)
 
     def test_step_bid_and_factory_placement(self):
-        lux_env, actions = jux.utils.load_replay(f'https://www.kaggleusercontent.com/episodes/{46215591}.json')
+        lux_env, actions = jux.jux_env.utils.load_replay(f'https://www.kaggleusercontent.com/episodes/{46215591}.json')
 
         buf_cfg = JuxBufferConfig(MAX_N_UNITS=200)
         jux_env, jux_state = JuxEnv.from_lux(lux_env, buf_cfg=buf_cfg)
@@ -91,7 +91,7 @@ class TestJuxEnv:
         for episode in episode_list:
             print(f"episode: {episode}")
             # 1. prepare an environment
-            lux_env, actions = jux.utils.load_replay(f'https://www.kaggleusercontent.com/episodes/{episode}.json')
+            lux_env, actions = jux.jux_env.utils.load_replay(f'https://www.kaggleusercontent.com/episodes/{episode}.json')
 
             # 2. skip early stage
             while lux_env.env_steps < 11:
@@ -157,7 +157,7 @@ class TestJuxEnvBatch:
         lux_env_list = []
         lux_actions_list = []
         for episode in episode_list:
-            env, act = jux.utils.load_replay(f'https://www.kaggleusercontent.com/episodes/{episode}.json')
+            env, act = jux.jux_env.utils.load_replay(f'https://www.kaggleusercontent.com/episodes/{episode}.json')
             lux_env_list.append(env)
             lux_actions_list.append(act)
 
@@ -220,7 +220,7 @@ class TestJuxEnvBatch:
         lux_env_list = []
         lux_actions_list = []
         for episode in episode_list:
-            env, act = jux.utils.load_replay(episode)
+            env, act = jux.jux_env.utils.load_replay(episode)
             # skip bid and factory placement
             while env.state.real_env_steps < 0:
                 env.step(next(act))

@@ -282,7 +282,7 @@ class TestEarlyStageState(chex.TestCase):
             _ = env.step(bid_act)
 
             # jux step
-            bid_act_jux = jux.actions.bid_action_from_lux(bid_act)
+            bid_act_jux = jux.jux_env.actions.bid_action_from_lux(bid_act)
             jux_state = state_step_bid(jux_state, *bid_act_jux)
 
             lux_state = State.from_lux(env.state)
@@ -317,7 +317,7 @@ class TestEarlyStageState(chex.TestCase):
             _ = env.step(bid_act)
 
             # jux step
-            bid_act_jux = jux.actions.bid_action_from_lux(bid_act)
+            bid_act_jux = jux.jux_env.actions.bid_action_from_lux(bid_act)
             jux_state = state_step_bid(jux_state, *bid_act_jux)
 
             lux_state = State.from_lux(env.state)
@@ -371,7 +371,7 @@ class TestEarlyStageState(chex.TestCase):
                     lux_act['player_0'] = {}
 
                 # create jux act
-                jux_act = jux.actions.factory_placement_action_from_lux(lux_act)
+                jux_act = jux.jux_env.actions.factory_placement_action_from_lux(lux_act)
 
                 # print(f"{valid = }")
                 # print(f"{lux_act = }")
